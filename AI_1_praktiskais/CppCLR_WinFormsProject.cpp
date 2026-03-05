@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <iostream>
+#include <ctime>
 
 using namespace System;
 
@@ -15,6 +16,7 @@ using namespace System::Windows::Forms;
 [STAThread]
 int main()
 {
+  srand(time(0));
   Application::EnableVisualStyles();
   Application::SetCompatibleTextRenderingDefault(false);
 
@@ -25,10 +27,3 @@ int main()
 
   return 0;
 }
-
-struct Node {
-    std::string string; // Current string of X and O
-    int scoreO;         // O score
-    int scoreX;         // X score
-    bool turn;          // true - O turn, false - X turn
-};
