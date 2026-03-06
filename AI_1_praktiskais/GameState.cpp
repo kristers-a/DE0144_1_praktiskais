@@ -35,25 +35,28 @@ GameState MakeMove(GameState state, int pos) {
 	uint32_t res = 0;
 
 	if (next.getTurn()) { // X's turn
-		if (!bit1 && !bit2) { // OO
-			next.setScoreX(next.getScoreX() + 2);
+		if (!bit2) {
+			if (!bit1) { // OO
+				next.setScoreX(next.getScoreX() + 2);
+			}
+			else { // OX
+				next.setScoreO(next.getScoreO() - 1); 
+			} 
 		}
-		else if (bit1 || bit2) { // OX or XO
-			next.setScoreO(next.getScoreO() - 1);
-		}
-		else { // XX
+		else { // XX or XO
 			return state;
 		}
 		res = 1;
 	}
 	else { // O's turn
-		if (bit1 && bit2) { // XX
-			next.setScoreO(next.getScoreO() + 2);
-		}
-		else if (bit1 || bit2) { // OX or XO
-			next.setScoreX(next.getScoreX() - 1);
-		}
-		else { // OO
+		if (bit2) {
+			if (bit1) { // XX
+				next.setScoreO(next.getScoreO() + 2);
+			}
+			else { // XO
+				next.setScoreO(next.getScoreO() + 2); 
+			}
+		else { // OO or OX
 			return state;
 		}
 		res = 0;

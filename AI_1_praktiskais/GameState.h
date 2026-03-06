@@ -31,10 +31,12 @@ public:
 		bool bit2 = (symbols >> (pos + 1)) & 1;
 
 		if (state.getTurn()) {
-			return !(bit1 && bit2);
+			if (!bit2) { return true; }
+			else { return false; }
 		}
 		else {
-			return (bit1 && bit2);
+			if (bit2) { return true; }
+			else { return false; }
 		}
 	}
 };
