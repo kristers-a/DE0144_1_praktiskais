@@ -20,6 +20,7 @@ public:
 	int8_t getScoreX() { return ScoreX; }
 	int8_t getScoreO() { return ScoreO; }
 	bool getTurn() { return Turn; }
+	int8_t getLength() { return symbolLength; }
 
 	void setSymbols(uint32_t Symbols) { this->Symbols = Symbols; }
 	void setScoreX(int8_t ScoreX) { this->ScoreX = ScoreX; }
