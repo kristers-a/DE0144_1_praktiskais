@@ -17,6 +17,7 @@ GameState::GameState(int length) {
 	this->ScoreX = 0;
 	this->ScoreO = 0;
 	this->Turn = false;
+	this->symbolLength = length;
 
 	if (length > 25) length = 25;
 	else if (length < 15) length = 15;
@@ -29,6 +30,10 @@ GameState::GameState(int length) {
 
 GameState MakeMove(GameState state, int pos) {
 	GameState next = state;
+	if (pos < 0 || pos >= state.symbolLength - 1) {
+		return state; // Invalid position
+	}
+
 	uint32_t symbols = next.getSymbols();
 	bool bit1 = (symbols >> pos) & 1; // get the bit at position pos
 	bool bit2 = (symbols >> (pos+1)) & 1; // get the bit at position next to pos
@@ -69,6 +74,7 @@ GameState MakeMove(GameState state, int pos) {
 	// state changing
 	next.setSymbols(symbols);
 	next.setTurn(!next.getTurn());
+	next.setLength(next.symbolLength - 1);
 
 	return next;
 }

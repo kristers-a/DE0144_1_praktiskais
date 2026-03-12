@@ -9,8 +9,9 @@ protected:
 	int8_t ScoreX;
 	int8_t ScoreO;
 	bool Turn;			// false = O turn, true = X turn
+	int8_t symbolLength;
 public:
-	GameState() : Symbols(), ScoreX(0), ScoreO(0), Turn(false) {}
+	GameState() : Symbols(), ScoreX(0), ScoreO(0), Turn(false), symbolLength() {}
 	GameState(uint32_t Symbols);
 	GameState(int8_t length);
 
@@ -24,18 +25,23 @@ public:
 	void setScoreX(int8_t ScoreX) { this->ScoreX = ScoreX; }
 	void setScoreO(int8_t ScoreO) { this->ScoreO = ScoreO; }
 	void setTurn(bool Turn) { this->Turn = Turn; }
+	void setLength(int8_t length) { this->symbolLength = length; }
 
 	bool validCheck(const GameState& state, int pos) {
+		if (pos < 0 || pos >= state.symbolLength - 1) {
+			return false; // Invalid position
+		}
+
 		uint32_t symbols = state.getSymbols();
 		bool bit1 = (symbols >> pos) & 1;
 		bool bit2 = (symbols >> (pos + 1)) & 1;
 
-		if (state.getTurn()) {
-			if (!bit2) { return true; }
+		if (state.getTurn()) { // X's turn
+			if (!bit2) { return true; } // OO or OX
 			else { return false; }
 		}
-		else {
-			if (bit2) { return true; }
+		else { // O's turn
+			if (bit2) { return true; } // XX or XO
 			else { return false; }
 		}
 	}
