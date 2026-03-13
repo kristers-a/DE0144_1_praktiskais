@@ -12,7 +12,7 @@ GameState::GameState(uint32_t Symbols) {
 	this->Turn = false;
 }
 
-GameState::GameState(int length) {
+GameState::GameState(int8_t length) {
 	this->Symbols = 0;
 	this->ScoreX = 0;
 	this->ScoreO = 0;
@@ -30,7 +30,7 @@ GameState::GameState(int length) {
 
 GameState MakeMove(GameState state, int pos) {
 	GameState next = state;
-	if (pos < 0 || pos >= state.symbolLength - 1) {
+	if (pos < 0 || pos >= state.getLength() - 1) {
 		return state; // Invalid position
 	}
 
@@ -59,8 +59,9 @@ GameState MakeMove(GameState state, int pos) {
 				next.setScoreO(next.getScoreO() + 2);
 			}
 			else { // XO
-				next.setScoreO(next.getScoreO() + 2); 
+				next.setScoreO(next.getScoreO() + 2);
 			}
+		}
 		else { // OO or OX
 			return state;
 		}
@@ -74,7 +75,7 @@ GameState MakeMove(GameState state, int pos) {
 	// state changing
 	next.setSymbols(symbols);
 	next.setTurn(!next.getTurn());
-	next.setLength(next.symbolLength - 1);
+	next.setLength(next.getLength() - 1);
 
 	return next;
 }

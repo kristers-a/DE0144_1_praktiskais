@@ -33,17 +33,15 @@ public:
 			return false; // Invalid position
 		}
 
-		uint32_t symbols = state.getSymbols();
+		uint32_t symbols = state.Symbols;
 		bool bit1 = (symbols >> pos) & 1;
 		bool bit2 = (symbols >> (pos + 1)) & 1;
 
-		if (state.getTurn()) { // X's turn
-			if (!bit2) { return true; } // OO or OX
-			else { return false; }
+		if (state.Turn) { // X's turn
+			return !bit1; //OO or OX (theese are the only moves where the first bit is a 0)
 		}
 		else { // O's turn
-			if (bit2) { return true; } // XX or XO
-			else { return false; }
+			return bit1; //XX or XO (theese are the only moves where the first bit is a 1)
 		}
 	}
 };
