@@ -29,11 +29,14 @@ GameState::GameState(int8_t length) {
 }
 
 GameState MakeMove(GameState state, int pos) {
-	GameState next = state;
+	//Invalid state/move check
 	if (pos < 0 || pos >= state.getLength() - 1) {
-		return state; // Invalid position
+		GameState invalidState;
+		invalidState.setLength(0); //doesnt go on any further in the game tree
+		return invalidState;
 	}
 
+	GameState next = state;
 	uint32_t symbols = next.getSymbols();
 	bool bit1 = (symbols >> pos) & 1; // get the bit at position pos
 	bool bit2 = (symbols >> (pos+1)) & 1; // get the bit at position next to pos
@@ -49,7 +52,8 @@ GameState MakeMove(GameState state, int pos) {
 			} 
 		}
 		else { // XX or XO
-			return state;
+			next.setLength(0);
+			return next;
 		}
 		res = 1;
 	}
@@ -63,7 +67,8 @@ GameState MakeMove(GameState state, int pos) {
 			}
 		}
 		else { // OO or OX
-			return state;
+			next.setLength(0);
+			return next;
 		}
 		res = 0;
 	}

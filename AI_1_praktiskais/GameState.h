@@ -45,3 +45,5 @@ public:
 		}
 	}
 };
+
+GameState MakeMove(GameState state, int pos);
