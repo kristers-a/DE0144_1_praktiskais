@@ -8,14 +8,14 @@ class GameNode {
 	private:
 		GameState state;
 		int movePosition; // the position of the move that led to this state
-		vector<GameNode*> children; // child nodes representing possible next states
+		std::vector<GameNode*> children; // child nodes representing possible next states
 
 	public:
 		GameNode(GameState s, int position = -1) : state(s), movePosition(position) {}
 
 		GameState& getState() { return state; }
 		int GetMovePosition() { return movePosition; }
-		const vector<GameNode*>& getChildren() const { return children; }
+		const std::vector<GameNode*>& getChildren() const { return children; }
 
 		void addChild(GameNode* child) {
 			children.push_back(child);
@@ -30,6 +30,6 @@ class GameNode {
 };
 
 void generateGameTree(GameNode* root, int8_t depth);
-void exportToDot(GameNode* node, ostream& out);
+void exportToDot(GameNode* node, std::ostream& out);
 void getDotFile(GameNode* root);
 int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited);
