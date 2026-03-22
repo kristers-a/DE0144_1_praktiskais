@@ -6,6 +6,7 @@ namespace CppCLRWinFormsProject {
     using namespace System;
     using namespace System::Drawing;
     using namespace System::Windows::Forms;
+    using namespace cli;
 
     public ref class Form1 : public Form {
     private:
