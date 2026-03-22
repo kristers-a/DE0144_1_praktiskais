@@ -19,7 +19,7 @@ int main()
   Application::SetCompatibleTextRenderingDefault(false);
 
   CppCLRWinFormsProject::Form1^ form = gcnew CppCLRWinFormsProject::Form1();
-  form->textBox1->AppendText("Hello World");
+  //form->textBox1->AppendText("Hello World");
 
   Application::Run(form);
 
