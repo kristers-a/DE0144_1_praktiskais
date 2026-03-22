@@ -66,3 +66,32 @@ void getDotFile(GameNode* root) {
 		outFile.close();
 	}
 }
+
+#include <algorithm>
+
+int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited) {
+    nodesVisited++;
+
+    if (depth == 0 || node->getChildren().empty()) {
+        return 0; 
+    }
+
+    if (isMaximizingPlayer) {
+        int bestValue = -1000000;
+
+        for (GameNode* child : node->getChildren()) {
+            int value = minimax(child, depth - 1, false, nodesVisited);
+            bestValue = std::max(bestValue, value); 
+        }
+        return bestValue;
+    } 
+    else {
+        int bestValue = 1000000;
+
+        for (GameNode* child : node->getChildren()) {
+            int value = minimax(child, depth - 1, true, nodesVisited);
+            bestValue = std::min(bestValue, value);
+        }
+        return bestValue;
+    }
+}
