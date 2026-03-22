@@ -32,3 +32,4 @@ class GameNode {
 void generateGameTree(GameNode* root, int8_t depth);
 void exportToDot(GameNode* node, ostream& out);
 void getDotFile(GameNode* root);
+int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited);
