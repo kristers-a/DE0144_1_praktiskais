@@ -73,7 +73,7 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
     nodesVisited++;
 
     if (depth == 0 || node->getChildren().empty()) {
-        return 0; 
+        return node->getState().getScoreX() - node->getState().getScoreO();
     }
 
     if (isMaximizingPlayer) {
@@ -94,4 +94,5 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
         }
         return bestValue;
     }
+}
 }
