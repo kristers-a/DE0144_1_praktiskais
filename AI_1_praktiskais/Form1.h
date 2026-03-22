@@ -230,53 +230,29 @@ namespace CppCLRWinFormsProject {
         }
 
         void HandleSymbolClick(Object^ sender, EventArgs^ e) {
-            if (!gameState) {
-                return;
-            }
+            if (!gameState) return; // Check initialised game state
+            if (rbO->Checked && gameState->getTurn()) return; // Wrong player checks
+            if (rbX->Checked && !gameState->getTurn()) return;
 
-            if (rbO->Checked && gameState->getTurn()) {
-                return;
-            }
 
-            if (rbX->Checked && !gameState->getTurn()) {
-                return;
-            }
-
+            //Check if valid move
             int clickedIndex = safe_cast<int>(safe_cast<Button^>(sender)->Tag);
-
-            if (selectedIndex == -1) {
-                selectedIndex = clickedIndex;
-                symbolButtons[clickedIndex]->BackColor = Color::Yellow;
+            if (!gameState->validCheck(*gameState, clickedIndex)) {
                 return;
             }
 
-            if (clickedIndex == selectedIndex) {
-                symbolButtons[clickedIndex]->ResetBackColor();
-                selectedIndex = -1;
-                return;
-            }
-
-            int leftIndex = Math::Min(clickedIndex, selectedIndex);
-
-            if (Math::Abs(clickedIndex - selectedIndex) != 1 || !gameState->validCheck(*gameState, leftIndex)) {
-                symbolButtons[selectedIndex]->BackColor = Color::Red;
-                symbolButtons[clickedIndex]->BackColor = Color::Red;
-                selectedIndex = -1;
-                RefreshSequence();
-                return;
-            }
-
-            *gameState = MakeMove(*gameState, leftIndex);
-            selectedIndex = -1;
-
+            // Make valid move
+            *gameState = MakeMove(*gameState, clickedIndex);
             RefreshSequence();
             UpdateScoreLabels();
 
+            // Make CPU move
             if (!IsGameOver()) {
                 statusLabel->Text = L"Computer is thinking...";
                 newGameButton->Enabled = false;
                 computerTurnTimer->Start();
             }
+
         }
 
         void HandleComputerTurn(Object^ sender, EventArgs^ e) {
