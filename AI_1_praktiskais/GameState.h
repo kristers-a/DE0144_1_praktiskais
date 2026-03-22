@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 
-using namespace std;
 
 class GameState {
 protected:
