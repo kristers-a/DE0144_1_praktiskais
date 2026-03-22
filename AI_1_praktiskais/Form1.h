@@ -96,7 +96,6 @@ namespace CppCLRWinFormsProject {
             rbX->AutoSize = true;
             rbX->Location = Point(390, 12);
 
-            // Разделитель
             Label^ lblAlgorithm = CreateLabel(L"Algorithm:", 10, 42);
 
             rbMinimax = gcnew RadioButton();
@@ -241,7 +240,7 @@ namespace CppCLRWinFormsProject {
                 // minimax
             }
             else {
-                // TODO: alphabeta
+                // alphabeta
             }
             aiMoveIndex = -1;
 
