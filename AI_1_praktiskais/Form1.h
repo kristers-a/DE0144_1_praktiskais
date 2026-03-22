@@ -15,6 +15,9 @@ namespace CppCLRWinFormsProject {
 
         array<Button^>^ symbolButtons;
 
+        GroupBox^ groupSelectPlayer;
+        GroupBox^ groupSelectAlgorithm;
+
         RadioButton^ rbO;
         RadioButton^ rbX;
         RadioButton^ rbMinimax;
@@ -69,7 +72,7 @@ namespace CppCLRWinFormsProject {
 
         void InitializeComponent() {
             this->Text = L"X-O Game";
-            this->Height = 290;
+            this->Height = 300;
             this->Width = 900;
 
             lengthSelector = gcnew NumericUpDown();
@@ -77,54 +80,63 @@ namespace CppCLRWinFormsProject {
             lengthSelector->Maximum = 25;
             lengthSelector->Value = 20;
             lengthSelector->Width = 50;
-            lengthSelector->Location = Point(125, 11);
+            lengthSelector->Location = Point(125, 13);
 
             newGameButton = gcnew Button();
             newGameButton->Text = L"New Game";
             newGameButton->Width = 100;
-            newGameButton->Location = Point(185, 10);
+            newGameButton->Location = Point(185, 11);
             newGameButton->Click += gcnew EventHandler(this, &Form1::StartNewGame);
 
             rbO = gcnew RadioButton();
-            rbO->Text = L"Play as O";
+            rbO->Text = L"O";
             rbO->Checked = true;
             rbO->AutoSize = true;
-            rbO->Location = Point(300, 12);
+            rbO->Location = Point(10, 17);
 
             rbX = gcnew RadioButton();
-            rbX->Text = L"Play as X";
+            rbX->Text = L"X";
             rbX->AutoSize = true;
-            rbX->Location = Point(390, 12);
+            rbX->Location = Point(55, 17);
 
-            Label^ lblAlgorithm = CreateLabel(L"Algorithm:", 10, 42);
+            groupSelectPlayer = gcnew GroupBox();
+            groupSelectPlayer->Text = L"Play as";
+            groupSelectPlayer->Location = Point(300, 5);
+            groupSelectPlayer->Size = Drawing::Size(100, 42);
+            groupSelectPlayer->Controls->Add(rbO);
+            groupSelectPlayer->Controls->Add(rbX);
 
             rbMinimax = gcnew RadioButton();
             rbMinimax->Text = L"Minimax";
             rbMinimax->Checked = true;
             rbMinimax->AutoSize = true;
-            rbMinimax->Location = Point(125, 40);
+            rbMinimax->Location = Point(10, 17);
 
             rbAlphaBeta = gcnew RadioButton();
             rbAlphaBeta->Text = L"Alpha-Beta";
             rbAlphaBeta->AutoSize = true;
-            rbAlphaBeta->Location = Point(220, 40);
+            rbAlphaBeta->Location = Point(90, 17);
+
+            groupSelectAlgorithm = gcnew GroupBox();
+            groupSelectAlgorithm->Text = L"Algorithm";
+            groupSelectAlgorithm->Location = Point(10, 40);
+            groupSelectAlgorithm->Size = Drawing::Size(200, 42);
+            groupSelectAlgorithm->Controls->Add(rbMinimax);
+            groupSelectAlgorithm->Controls->Add(rbAlphaBeta);
 
             sequencePanel = gcnew Panel();
-            sequencePanel->Location = Point(5, 75);
+            sequencePanel->Location = Point(5, 90);
             sequencePanel->Size = Drawing::Size(900, 66);
 
-            playerScoreLabel = CreateLabel(L"Player (O): 0", 10, 185);
-            computerScoreLabel = CreateLabel(L"Computer (X): 0", 10, 205);
-            statusLabel = CreateLabel(L"Press New Game", 300, 185);
+            playerScoreLabel = CreateLabel(L"Player (O): 0", 10, 200);
+            computerScoreLabel = CreateLabel(L"Computer (X): 0", 10, 220);
+            statusLabel = CreateLabel(L"Press New Game", 300, 200);
 
-            this->Controls->Add(CreateLabel(L"Length (15-25):", 10, 14));
+            this->Controls->Add(CreateLabel(L"Length (15-25):", 10, 15));
             this->Controls->Add(lengthSelector);
             this->Controls->Add(newGameButton);
-            this->Controls->Add(rbO);
-            this->Controls->Add(rbX);
-            this->Controls->Add(lblAlgorithm);
-            this->Controls->Add(rbMinimax);
-            this->Controls->Add(rbAlphaBeta);
+            this->Controls->Add(groupSelectPlayer);
+            this->Controls->Add(groupSelectAlgorithm);
             this->Controls->Add(sequencePanel);
             this->Controls->Add(playerScoreLabel);
             this->Controls->Add(computerScoreLabel);
@@ -139,10 +151,8 @@ namespace CppCLRWinFormsProject {
             gameState = new GameState((int8_t)lengthSelector->Value);
             selectedIndex = -1;
 
-            rbO->Visible = false;
-            rbX->Visible = false;
-            rbMinimax->Visible = false;
-            rbAlphaBeta->Visible = false;
+            groupSelectPlayer->Visible = false;
+            groupSelectAlgorithm->Visible = false;
 
             this->Width = gameState->getLength() * 50 + 80;
 
@@ -282,10 +292,8 @@ namespace CppCLRWinFormsProject {
             int playerXScore = (int)gameState->getScoreX();
 
             statusLabel->Text = L"Game over";
-            rbO->Visible = true;
-            rbX->Visible = true;
-            rbMinimax->Visible = true;
-            rbAlphaBeta->Visible = true;
+            groupSelectPlayer->Visible = true;
+            groupSelectAlgorithm->Visible = true;
             newGameButton->Enabled = true;
 
             RefreshSequence();
