@@ -95,4 +95,3 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
         return bestValue;
     }
 }
-}
