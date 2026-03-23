@@ -179,16 +179,51 @@ namespace CppCLRWinFormsProject {
             symbolButtons = gcnew array<Button^>(length);
 
             for (int i = 0; i < length; i++) {
+                Label^ lbl = gcnew Label();
+                lbl->Width = 46;
+                lbl->Height = 46;
+                lbl->Left = 5 + i * 50;
+                lbl->Top = 5;  // just below the 46px button + 5px top padding
+                lbl->Text = ((gameState->getSymbols() >> i) & 1) ? L"X" : L"O";
+                lbl->TextAlign = ContentAlignment::MiddleCenter;
+                lbl->Font = gcnew Drawing::Font(this->Font->FontFamily, 8, FontStyle::Regular);
+
+                // Make pretty 
+                lbl->BorderStyle = BorderStyle::FixedSingle; // gives it a box outline
+                lbl->BackColor = Color::White;  // labels ignore Transparent, needs explicit color
+                lbl->ForeColor = Color::Black;
+                lbl->Enabled = false;  // disables hit detection and lets it pass to the buttons
+                sequencePanel->Controls->Add(lbl);
+            }
+
+
+            for (int i = 0; i < length-1; i++) {
+                // Tile them and make them work
                 Button^ button = gcnew Button();
                 button->Width = 46;
                 button->Height = 46;
-                button->Left = 5 + i * 50;
+                button->Left = (button->Width/2)+5 + i * 50;
                 button->Top = 5;
-                button->Font = gcnew Drawing::Font(this->Font->FontFamily, 15, FontStyle::Bold);
+                //button->Font = gcnew Drawing::Font(this->Font->FontFamily, 15, FontStyle::Bold);
                 button->Tag = i;
-                button->Text = ((gameState->getSymbols() >> i) & 1) ? L"X" : L"O";
+                //button->Text = ((gameState->getSymbols() >> i) & 1) ? L"X" : L"O";
+                button->Text = "";
                 button->Click += gcnew EventHandler(this, &Form1::HandleSymbolClick);
 
+                // Make it look nice
+                button->FlatStyle = FlatStyle::Flat;
+                button->FlatAppearance->BorderColor = Color::Red;
+                button->FlatAppearance->BorderSize = 0;
+                button->BackColor = Color::Transparent;
+                button->FlatAppearance->MouseOverBackColor = Color::Transparent;
+                button->ForeColor = Color::Black; // or whatever text color you want
+                
+                //button->BackColor = Color::Blue;
+                //button->ForeColor = Color::Transparent;          // hide text too
+                button->MouseEnter += gcnew EventHandler(this, &Form1::SymbolButton_OnHover);
+                button->MouseLeave += gcnew EventHandler(this, &Form1::SymbolButton_OffHover);
+
+                // Add
                 sequencePanel->Controls->Add(button);
                 symbolButtons[i] = button;
             }
@@ -287,6 +322,38 @@ namespace CppCLRWinFormsProject {
         void UpdateScoreLabels() {
             playerScoreLabel->Text = L"Player (O): " + ((int)gameState->getScoreO()).ToString();
             computerScoreLabel->Text = L"Computer (X): " + ((int)gameState->getScoreX()).ToString();
+        }
+
+        void SymbolButton_OnHover(Object^ sender, EventArgs^ e) {
+            Button^ btn = safe_cast<Button^>(sender);
+            btn->FlatAppearance->BorderSize = 2;
+            btn->ForeColor = Color::Black;
+
+            // Grow: 2x width, +5 height
+            int newW = btn->Width * 2 + 10;    // 46 -> 92
+            int newH = btn->Height + 10;   // 46 -> 51
+
+            // Shift left to keep it centered over the original position
+            int origCenter = btn->Left + 46 / 2;  // center of original size
+            btn->Left = origCenter - newW / 2 + 10/4;
+            btn->Top = btn->Top - 10 / 2;       // center vertically too
+            btn->Width = newW;
+            btn->Height = newH;
+            //btn->BringToFront();
+        }
+
+        void SymbolButton_OffHover(Object^ sender, EventArgs^ e) {
+            Button^ btn = safe_cast<Button^>(sender);
+            btn->FlatAppearance->BorderSize = 0;
+            btn->ForeColor = Color::Transparent;
+
+            // Restore original size and position
+            int i = safe_cast<int>(btn->Tag);
+            btn->Width = 46;
+            btn->Height = 46;
+            btn->Left = (46/2)+5 + i * 50;  // recalculate from index
+            btn->Top = 5;
+            //btn->SendToBack();
         }
     };
 }

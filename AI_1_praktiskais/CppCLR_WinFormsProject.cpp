@@ -22,13 +22,7 @@ int main()
   Application::SetCompatibleTextRenderingDefault(false);
 
   CppCLRWinFormsProject::Form1^ form = gcnew CppCLRWinFormsProject::Form1();
-
-  // For debugging purposes
-  GameState startState(uint32_t(55666));
-  startState.setLength(18);
-  GameNode* root = new GameNode(startState);
-  generateGameTree(root, 5); // be careful with the depth
-  getDotFile(root); //saves the DOT file in the project folder
+  //form->textBox1->AppendText("Hello World");
 
   Application::Run(form);
 
