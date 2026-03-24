@@ -33,3 +33,4 @@ void generateGameTree(GameNode* root, int8_t depth);
 void exportToDot(GameNode* node, std::ostream& out);
 void getDotFile(GameNode* root);
 int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited);
+int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingPlayer, int& nodesVisited);

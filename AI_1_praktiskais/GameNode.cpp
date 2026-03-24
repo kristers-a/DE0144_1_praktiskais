@@ -95,3 +95,40 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
         return bestValue;
     }
 }
+
+int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingPlayer, int& nodesVisited) {
+    nodesVisited++;
+
+    if (depth == 0 || node->getChildren().empty()) {
+        return node->getState().getScoreX() - node->getState().getScoreO();
+    }
+
+    if (isMaximizingPlayer) {
+        int bestValue = -1000000;
+
+        for (GameNode* child : node->getChildren()) {
+            int value = alphabeta(child, depth - 1, alpha, beta, false, nodesVisited);
+            bestValue = std::max(bestValue, value);
+
+            alpha = std::max(alpha, bestValue);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return bestValue;
+    }
+    else {
+        int bestValue = 1000000;
+
+        for (GameNode* child : node->getChildren()) {
+            int value = alphabeta(child, depth - 1, alpha, beta, true, nodesVisited);
+            bestValue = std::min(bestValue, value);
+
+            beta = std::min(beta, bestValue);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return bestValue;
+    }
+}
