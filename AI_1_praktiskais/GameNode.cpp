@@ -73,7 +73,7 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
     nodesVisited++;
 
     if (depth == 0 || node->getChildren().empty()) {
-        return node->getState().getScoreX() - node->getState().getScoreO();
+        return node->getState().evaluate();
     }
 
     if (isMaximizingPlayer) {
@@ -100,7 +100,7 @@ int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingP
     nodesVisited++;
 
     if (depth == 0 || node->getChildren().empty()) {
-        return node->getState().getScoreX() - node->getState().getScoreO();
+        return node->getState().evaluate();
     }
 
     if (isMaximizingPlayer) {

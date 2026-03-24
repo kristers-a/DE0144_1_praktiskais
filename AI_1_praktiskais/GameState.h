@@ -43,6 +43,35 @@ public:
 			return bit1; //XX or XO (theese are the only moves where the first bit is a 1)
 		}
 	}
+
+	int evaluate() {
+		// Skaita starpība
+		int score = this->getScoreX() - this->getScoreO();
+
+		// Potenciālo gājienu novērtējums
+		uint32_t symbols = this->getSymbols();
+		int length = this->getLength();
+
+		int potentialX = 0;
+		int potentialO = 0;
+
+		for (int i = 0; i < length - 1; i++) {
+			bool bit1 = (symbols >> i) & 1;
+			bool bit2 = (symbols >> (i + 1)) & 1;
+
+			if (this->getTurn()) {
+				if (!bit2 && !bit1) potentialX += 2;
+				if (!bit2 && bit1)  potentialX += 1;
+			}
+			else {
+				if (bit2 && bit1)   potentialO += 2;
+				if (bit2 && !bit1)  potentialO += 1;
+			}
+		}
+
+		// Kopējais heiristiskais novērtējums
+		return score + potentialX - potentialO;
+	}
 };
 
 GameState MakeMove(GameState state, int pos);
