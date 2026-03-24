@@ -43,8 +43,8 @@ GameState MakeMove(GameState state, int pos) {
 	uint32_t res = 0;
 
 	if (next.getTurn()) { // X's turn
-		if (!bit2) {
-			if (!bit1) { // OO
+		if (!bit1) {
+			if (!bit2) { // OO
 				next.setScoreX(next.getScoreX() + 2);
 			}
 			else { // OX
@@ -58,12 +58,12 @@ GameState MakeMove(GameState state, int pos) {
 		res = 1;
 	}
 	else { // O's turn
-		if (bit2) {
-			if (bit1) { // XX
+		if (bit1) {
+			if (bit2) { // XX
 				next.setScoreO(next.getScoreO() + 2);
 			}
 			else { // XO
-				next.setScoreO(next.getScoreO() + 2);
+				next.setScoreX(next.getScoreX() - 1);
 			}
 		}
 		else { // OO or OX

@@ -37,10 +37,10 @@ public:
 		bool bit2 = (symbols >> (pos + 1)) & 1;
 
 		if (state.Turn) { // X's turn
-			return !bit1; //OO or OX (theese are the only moves where the first bit is a 0)
+			return !bit1; //OO or OX
 		}
 		else { // O's turn
-			return bit1; //XX or XO (theese are the only moves where the first bit is a 1)
+			return bit1; //XX or XO
 		}
 	}
 
@@ -59,13 +59,13 @@ public:
 			bool bit1 = (symbols >> i) & 1;
 			bool bit2 = (symbols >> (i + 1)) & 1;
 
-			if (this->getTurn()) {
-				if (!bit2 && !bit1) potentialX += 2;
-				if (!bit2 && bit1)  potentialX += 1;
+			if (this->getTurn()) { // X's turn requires !bit1 (left is O)
+				if (!bit1 && !bit2) potentialX += 2; // OO
+				if (!bit1 && bit2)  potentialX += 1; // OX (Wait, maybe potentialX changes, but let's just make the condition match !bit1)
 			}
-			else {
-				if (bit2 && bit1)   potentialO += 2;
-				if (bit2 && !bit1)  potentialO += 1;
+			else { // O's turn requires bit1 (left is X)
+				if (bit1 && bit2)   potentialO += 2; // XX
+				if (bit1 && !bit2)  potentialO += 1; // XO
 			}
 		}
 

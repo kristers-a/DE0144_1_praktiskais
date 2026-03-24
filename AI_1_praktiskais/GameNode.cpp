@@ -69,7 +69,7 @@ void getDotFile(GameNode* root) {
 
 #include <algorithm>
 
-int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited) {
+int MiniMax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisited) {
     nodesVisited++;
 
     if (depth == 0 || node->getChildren().empty()) {
@@ -80,7 +80,7 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
         int bestValue = -1000000;
 
         for (GameNode* child : node->getChildren()) {
-            int value = minimax(child, depth - 1, false, nodesVisited);
+            int value = MiniMax(child, depth - 1, false, nodesVisited);
             bestValue = std::max(bestValue, value); 
         }
         return bestValue;
@@ -89,14 +89,14 @@ int minimax(GameNode* node, int depth, bool isMaximizingPlayer, int& nodesVisite
         int bestValue = 1000000;
 
         for (GameNode* child : node->getChildren()) {
-            int value = minimax(child, depth - 1, true, nodesVisited);
+            int value = MiniMax(child, depth - 1, true, nodesVisited);
             bestValue = std::min(bestValue, value);
         }
         return bestValue;
     }
 }
 
-int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingPlayer, int& nodesVisited) {
+int AlphaBeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingPlayer, int& nodesVisited) {
     nodesVisited++;
 
     if (depth == 0 || node->getChildren().empty()) {
@@ -107,7 +107,7 @@ int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingP
         int bestValue = -1000000;
 
         for (GameNode* child : node->getChildren()) {
-            int value = alphabeta(child, depth - 1, alpha, beta, false, nodesVisited);
+            int value = AlphaBeta(child, depth - 1, alpha, beta, false, nodesVisited);
             bestValue = std::max(bestValue, value);
 
             alpha = std::max(alpha, bestValue);
@@ -121,7 +121,7 @@ int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingP
         int bestValue = 1000000;
 
         for (GameNode* child : node->getChildren()) {
-            int value = alphabeta(child, depth - 1, alpha, beta, true, nodesVisited);
+            int value = AlphaBeta(child, depth - 1, alpha, beta, true, nodesVisited);
             bestValue = std::min(bestValue, value);
 
             beta = std::min(beta, bestValue);
@@ -131,4 +131,28 @@ int alphabeta(GameNode* node, int depth, int alpha, int beta, bool isMaximizingP
         }
         return bestValue;
     }
+}
+
+int GetAIMove(GameNode* node, int depth, bool useAlphaBeta, int& nodesVisited) {
+    int bestMove = -1;
+    int bestValue = -1000000;
+    nodesVisited = 0;
+
+    //Check if there are moves
+    if (node->getChildren().empty()) return -1;
+
+    for (GameNode* child : node->getChildren()) {
+        int value = 0;
+        if (useAlphaBeta) {
+            value = AlphaBeta(child, depth - 1, -1000000, 1000000, false, nodesVisited);
+        } else {
+            value = MiniMax(child, depth - 1, false, nodesVisited);
+        }
+
+        if (value > bestValue) {
+            bestValue = value;
+            bestMove = child->GetMovePosition();
+        }
+    }
+    return bestMove;
 }

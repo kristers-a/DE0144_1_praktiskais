@@ -26,8 +26,8 @@ namespace CppCLRWinFormsProject {
 
         Panel^ sequencePanel;
 
-        Label^ playerScoreLabel;
-        Label^ computerScoreLabel;
+        Label^ playerOScoreLabel;
+        Label^ playerXScoreLabel;
         Label^ statusLabel;
 
         Button^ newGameButton;
@@ -129,8 +129,8 @@ namespace CppCLRWinFormsProject {
             sequencePanel->Location = Point(5, 90);
             sequencePanel->Size = Drawing::Size(900, 66);
 
-            playerScoreLabel = CreateLabel(L"Player (O): 0", 10, 200);
-            computerScoreLabel = CreateLabel(L"Computer (X): 0", 10, 220);
+            playerOScoreLabel = CreateLabel(L"Player (O): 0", 10, 200);
+            playerXScoreLabel = CreateLabel(L"Player (X): 0", 10, 220);
             statusLabel = CreateLabel(L"Press New Game", 300, 200);
 
             this->Controls->Add(CreateLabel(L"Length (15-25):", 10, 15));
@@ -139,8 +139,8 @@ namespace CppCLRWinFormsProject {
             this->Controls->Add(groupSelectPlayer);
             this->Controls->Add(groupSelectAlgorithm);
             this->Controls->Add(sequencePanel);
-            this->Controls->Add(playerScoreLabel);
-            this->Controls->Add(computerScoreLabel);
+            this->Controls->Add(playerOScoreLabel);
+            this->Controls->Add(playerXScoreLabel);
             this->Controls->Add(statusLabel);
         }
 
@@ -204,9 +204,7 @@ namespace CppCLRWinFormsProject {
                 button->Height = 46;
                 button->Left = (button->Width/2)+5 + i * 50;
                 button->Top = 5;
-                //button->Font = gcnew Drawing::Font(this->Font->FontFamily, 15, FontStyle::Bold);
                 button->Tag = i;
-                //button->Text = ((gameState->getSymbols() >> i) & 1) ? L"X" : L"O";
                 button->Text = "";
                 button->Click += gcnew EventHandler(this, &Form1::HandleSymbolClick);
 
@@ -218,8 +216,6 @@ namespace CppCLRWinFormsProject {
                 button->FlatAppearance->MouseOverBackColor = Color::Transparent;
                 button->ForeColor = Color::Black; // or whatever text color you want
                 
-                //button->BackColor = Color::Blue;
-                //button->ForeColor = Color::Transparent;          // hide text too
                 button->MouseEnter += gcnew EventHandler(this, &Form1::SymbolButton_OnHover);
                 button->MouseLeave += gcnew EventHandler(this, &Form1::SymbolButton_OffHover);
 
@@ -257,14 +253,21 @@ namespace CppCLRWinFormsProject {
 
         void HandleComputerTurn(Object^ sender, EventArgs^ e) {
             computerTurnTimer->Stop();
+            if (!gameState || IsGameOver()) return;
 
-            if (rbMinimax->Checked) {
-                // minimax
-            }
-            else {
-                // alphabeta
-            }
-            aiMoveIndex = -1;
+            int depth = 6; // lower if the AI takes too long on its turn
+            bool useAlphaBeta = rbAlphaBeta->Checked;
+
+            //Generate the game tree for the current position
+            GameNode* root = new GameNode(*gameState);
+            generateGameTree(root, depth);
+
+            //Get the index of the move the AI wants to make
+            int nodesVisited = 0;
+            aiMoveIndex = GetAIMove(root, depth, useAlphaBeta, nodesVisited);
+
+            //Clean up memory, by deleting the tree
+            delete root;
 
             if (aiMoveIndex == -1) {
                 FinishGame();
@@ -320,8 +323,13 @@ namespace CppCLRWinFormsProject {
         }
 
         void UpdateScoreLabels() {
-            playerScoreLabel->Text = L"Player (O): " + ((int)gameState->getScoreO()).ToString();
-            computerScoreLabel->Text = L"Computer (X): " + ((int)gameState->getScoreX()).ToString();
+            if (rbX->Checked) {
+                playerOScoreLabel->Text = L"Computer (O): " + ((int)gameState->getScoreO()).ToString();
+                playerXScoreLabel->Text = L"Player (X): " + ((int)gameState->getScoreX()).ToString();
+            } else {
+                playerOScoreLabel->Text = L"Player (O): " + ((int)gameState->getScoreO()).ToString();
+                playerXScoreLabel->Text = L"Computer (X): " + ((int)gameState->getScoreX()).ToString();
+            }
         }
 
         void SymbolButton_OnHover(Object^ sender, EventArgs^ e) {
@@ -339,7 +347,6 @@ namespace CppCLRWinFormsProject {
             btn->Top = btn->Top - 10 / 2;       // center vertically too
             btn->Width = newW;
             btn->Height = newH;
-            //btn->BringToFront();
         }
 
         void SymbolButton_OffHover(Object^ sender, EventArgs^ e) {
@@ -353,7 +360,6 @@ namespace CppCLRWinFormsProject {
             btn->Height = 46;
             btn->Left = (46/2)+5 + i * 50;  // recalculate from index
             btn->Top = 5;
-            //btn->SendToBack();
         }
     };
 }
