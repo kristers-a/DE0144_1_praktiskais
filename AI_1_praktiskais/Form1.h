@@ -11,7 +11,6 @@ namespace CppCLRWinFormsProject {
     public ref class Form1 : public Form {
     private:
         GameState* gameState;
-        int selectedIndex;
         int aiMoveIndex;
 
         array<Button^>^ symbolButtons;
@@ -34,12 +33,13 @@ namespace CppCLRWinFormsProject {
         NumericUpDown^ lengthSelector;
 
         Timer^ computerTurnTimer;
+        Timer^ cpuMoveHighlightTimer;
         System::ComponentModel::Container^ components;
+
 
     public:
         Form1() {
             gameState = nullptr;
-            selectedIndex = -1;
             aiMoveIndex = -1;
             symbolButtons = nullptr;
             components = nullptr;
@@ -49,6 +49,11 @@ namespace CppCLRWinFormsProject {
             computerTurnTimer = gcnew Timer();
             computerTurnTimer->Interval = 800;
             computerTurnTimer->Tick += gcnew EventHandler(this, &Form1::HandleComputerTurn);
+
+            cpuMoveHighlightTimer = gcnew Timer();
+            cpuMoveHighlightTimer->Interval = 1000;
+            cpuMoveHighlightTimer->Tick += gcnew EventHandler(this, &Form1::HandleCpuTurnHighlight);
+
         }
 
     protected:
@@ -150,7 +155,6 @@ namespace CppCLRWinFormsProject {
             }
 
             gameState = new GameState((int8_t)lengthSelector->Value);
-            selectedIndex = -1;
 
             groupSelectPlayer->Visible = false;
             groupSelectAlgorithm->Visible = false;
@@ -274,16 +278,12 @@ namespace CppCLRWinFormsProject {
                 return;
             }
 
-            *gameState = MakeMove(*gameState, aiMoveIndex);
 
-            RefreshSequence();
-            UpdateScoreLabels();
 
-            newGameButton->Enabled = true;
+            HighlightCpuMove(aiMoveIndex);
+            
 
-            if (!IsGameOver()) {
-                statusLabel->Text = L"Your turn";
-            }
+
         }
 
         bool IsGameOver() {
@@ -343,6 +343,7 @@ namespace CppCLRWinFormsProject {
 
             // Shift left to keep it centered over the original position
             int origCenter = btn->Left + 46 / 2;  // center of original size
+            btn->FlatAppearance->BorderColor = Color::Red;
             btn->Left = origCenter - newW / 2 + 10/4;
             btn->Top = btn->Top - 10 / 2;       // center vertically too
             btn->Width = newW;
@@ -361,5 +362,56 @@ namespace CppCLRWinFormsProject {
             btn->Left = (46/2)+5 + i * 50;  // recalculate from index
             btn->Top = 5;
         }
+
+        void HighlightCpuMove(int index) {
+            Button^ btn = symbolButtons[index];
+            btn->FlatAppearance->BorderSize = 2;
+            btn->ForeColor = Color::Black;
+
+            // Grow: 2x width, +5 height
+            int newW = btn->Width * 2 + 10;    // 46 -> 92
+            int newH = btn->Height + 10;   // 46 -> 51
+
+            // Shift left to keep it centered over the original position
+            int origCenter = btn->Left + 46 / 2;  // center of original size
+            btn->Left = origCenter - newW / 2 + 10 / 4;
+            btn->Top = btn->Top - 10 / 2;       // center vertically too
+            btn->Width = newW;
+            btn->Height = newH;
+
+            btn->FlatAppearance->BorderColor = Color::Blue;
+            cpuMoveHighlightTimer->Tag = index;
+            cpuMoveHighlightTimer->Start();
+
+
+        }
+        
+        void HandleCpuTurnHighlight(Object^ sender, EventArgs^ e) {
+            cpuMoveHighlightTimer->Stop();
+
+            // Unhighlight the button
+            Button^ btn = symbolButtons[aiMoveIndex];
+            btn->FlatAppearance->BorderSize = 0;
+            btn->ForeColor = Color::Transparent;
+            btn->FlatAppearance->BorderColor = Color::Red;
+            // Restore original size and position
+            int i = safe_cast<int>(btn->Tag);
+            btn->Width = 46;
+            btn->Height = 46;
+            btn->Left = (46 / 2) + 5 + i * 50;  // recalculate from index
+            btn->Top = 5;
+
+            //Update the state for the players move
+            *gameState = MakeMove(*gameState, aiMoveIndex);
+            RefreshSequence();
+            UpdateScoreLabels();
+
+            newGameButton->Enabled = true;
+
+            if (!IsGameOver()) {
+                statusLabel->Text = L"Your turn";
+            }
+        }
+        
     };
 }
