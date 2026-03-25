@@ -20,6 +20,16 @@ void generateGameTree(GameNode* root, int8_t depth) {
 	}
 }
 
+// Count nodes in the tree (including root)
+int CountNodes(GameNode* root) {
+	if (!root) return 0;
+	int count = 1;
+	for (GameNode* child : root->getChildren()) {
+		count += CountNodes(child);
+	}
+	return count;
+}
+
 //Only for debugging purposes
 void exportToDot(GameNode* node, std::ostream& out) {
     if (!node) return;
