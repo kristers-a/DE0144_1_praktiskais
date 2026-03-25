@@ -1,5 +1,5 @@
 #pragma once
-#include "GameState.h"
+#include "GameNode.h"
 
 namespace CppCLRWinFormsProject {
 
@@ -33,9 +33,23 @@ namespace CppCLRWinFormsProject {
         NumericUpDown^ lengthSelector;
 
         Timer^ computerTurnTimer;
-        Timer^ cpuMoveHighlightTimer;
+		Timer^ cpuMoveHighlightTimer;
         System::ComponentModel::Container^ components;
 
+
+        bool testingMode;
+
+        int aiMoveCount;
+
+        long generatedNodesMinimax;
+        long visitedNodesMinimax;
+        double totalTimeMinimax;
+
+        long generatedNodesAlpha;
+        long visitedNodesAlpha;
+        double totalTimeAlpha;
+
+        bool currentGameUseAlphaBeta;
 
     public:
         Form1() {
@@ -54,6 +68,19 @@ namespace CppCLRWinFormsProject {
             cpuMoveHighlightTimer->Interval = 1000;
             cpuMoveHighlightTimer->Tick += gcnew EventHandler(this, &Form1::HandleCpuTurnHighlight);
 
+            testingMode = false; //Toggle to see the AI stats after the game ends
+
+			aiMoveCount = 0;
+
+            generatedNodesMinimax = 0;
+            visitedNodesMinimax = 0;
+            totalTimeMinimax = 0.0;
+
+            generatedNodesAlpha = 0;
+            visitedNodesAlpha = 0;
+            totalTimeAlpha = 0.0;
+
+            currentGameUseAlphaBeta = false;
         }
 
     protected:
@@ -75,6 +102,10 @@ namespace CppCLRWinFormsProject {
             label->AutoSize = true;
             return label;
         }
+
+        void HandleComputerTurn(Object^ sender, EventArgs^ e);
+        void ResetStats();
+        void FinishGame();
 
         void InitializeComponent() {
             this->Text = L"X-O Game";
@@ -150,6 +181,8 @@ namespace CppCLRWinFormsProject {
         }
 
         void StartNewGame(Object^ sender, EventArgs^ e) {
+            ResetStats();
+
             if (gameState) {
                 delete gameState;
             }
@@ -163,6 +196,8 @@ namespace CppCLRWinFormsProject {
 
             RefreshSequence();
             UpdateScoreLabels();
+
+            currentGameUseAlphaBeta = rbAlphaBeta->Checked;
 
             if (rbX->Checked) {
                 gameState->setTurn(false);
@@ -252,38 +287,6 @@ namespace CppCLRWinFormsProject {
                 newGameButton->Enabled = false;
                 computerTurnTimer->Start();
             }
-
-        }
-
-        void HandleComputerTurn(Object^ sender, EventArgs^ e) {
-            computerTurnTimer->Stop();
-            if (!gameState || IsGameOver()) return;
-
-            int depth = 6; // lower if the AI takes too long on its turn
-            bool useAlphaBeta = rbAlphaBeta->Checked;
-
-            //Generate the game tree for the current position
-            GameNode* root = new GameNode(*gameState);
-            generateGameTree(root, depth);
-
-            //Get the index of the move the AI wants to make
-            int nodesVisited = 0;
-            aiMoveIndex = GetAIMove(root, depth, useAlphaBeta, nodesVisited);
-
-            //Clean up memory, by deleting the tree
-            delete root;
-
-            if (aiMoveIndex == -1) {
-                FinishGame();
-                return;
-            }
-
-
-
-            HighlightCpuMove(aiMoveIndex);
-            
-
-
         }
 
         bool IsGameOver() {
@@ -300,26 +303,6 @@ namespace CppCLRWinFormsProject {
 
             FinishGame();
             return true;
-        }
-
-        void FinishGame() {
-            int playerOScore = (int)gameState->getScoreO();
-            int playerXScore = (int)gameState->getScoreX();
-
-            statusLabel->Text = L"Game over";
-            groupSelectPlayer->Visible = true;
-            groupSelectAlgorithm->Visible = true;
-            newGameButton->Enabled = true;
-
-            RefreshSequence();
-
-            MessageBox::Show(
-                (playerOScore > playerXScore ? L"Player (O) wins!" : playerXScore > playerOScore ? L"Player (X) wins!" : L"Draw!") +
-                L"\n\nO: " + playerOScore.ToString() + L"  X: " + playerXScore.ToString(),
-                L"Game Over",
-                MessageBoxButtons::OK,
-                MessageBoxIcon::Information
-            );
         }
 
         void UpdateScoreLabels() {
@@ -382,8 +365,6 @@ namespace CppCLRWinFormsProject {
             btn->FlatAppearance->BorderColor = Color::Blue;
             cpuMoveHighlightTimer->Tag = index;
             cpuMoveHighlightTimer->Start();
-
-
         }
         
         void HandleCpuTurnHighlight(Object^ sender, EventArgs^ e) {
@@ -412,6 +393,5 @@ namespace CppCLRWinFormsProject {
                 statusLabel->Text = L"Your turn";
             }
         }
-        
     };
 }
