@@ -41,13 +41,9 @@ namespace CppCLRWinFormsProject {
 
         int aiMoveCount;
 
-        long generatedNodesMinimax;
-        long visitedNodesMinimax;
-        double totalTimeMinimax;
-
-        long generatedNodesAlpha;
-        long visitedNodesAlpha;
-        double totalTimeAlpha;
+        long generatedNodes;
+        long visitedNodes;
+        double totalTime;
 
         bool currentGameUseAlphaBeta;
 
@@ -72,13 +68,9 @@ namespace CppCLRWinFormsProject {
 
 			aiMoveCount = 0;
 
-            generatedNodesMinimax = 0;
-            visitedNodesMinimax = 0;
-            totalTimeMinimax = 0.0;
-
-            generatedNodesAlpha = 0;
-            visitedNodesAlpha = 0;
-            totalTimeAlpha = 0.0;
+            generatedNodes = 0;
+            visitedNodes = 0;
+            totalTime = 0.0;
 
             currentGameUseAlphaBeta = false;
         }

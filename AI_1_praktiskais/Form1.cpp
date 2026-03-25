@@ -33,15 +33,9 @@ namespace CppCLRWinFormsProject {
         //Save stats
         if (testingMode) {
 			this->aiMoveCount++;
-            if (useAlphaBeta) {
-                this->generatedNodesAlpha += generatedNodes;
-                this->visitedNodesAlpha += nodesVisited;
-                this->totalTimeAlpha += elapsedSeconds.count();
-            } else {
-                this->generatedNodesMinimax += generatedNodes;
-                this->visitedNodesMinimax += nodesVisited;
-                this->totalTimeMinimax += elapsedSeconds.count();
-            }
+            this->generatedNodes += generatedNodes;
+            this->visitedNodes += nodesVisited;
+            this->totalTime += elapsedSeconds.count();
         }
 
         if (aiMoveIndex == -1) {
@@ -55,13 +49,9 @@ namespace CppCLRWinFormsProject {
     void Form1::ResetStats() {
 		this->aiMoveCount = 0;
 
-        this->generatedNodesMinimax = 0;
-        this->visitedNodesMinimax = 0;
-        this->totalTimeMinimax = 0.0;
-
-        this->generatedNodesAlpha = 0;
-        this->visitedNodesAlpha = 0;
-        this->totalTimeAlpha = 0.0;
+        this->generatedNodes = 0;
+        this->visitedNodes = 0;
+        this->totalTime = 0.0;
     }
 
     void Form1::FinishGame() {
@@ -83,32 +73,17 @@ namespace CppCLRWinFormsProject {
         String^ message = resultText + L"\n\nO: " + System::Convert::ToString(playerOScore) + L"  X: " + System::Convert::ToString(playerXScore);
 
         if (testingMode) {
-            if (currentGameUseAlphaBeta) {
-                String^ alphaStats = L"\n\nAlpha-Beta Stats:\nGenerated nodes: " + System::Convert::ToString(this->generatedNodesAlpha)
-                    + L"\nVisited nodes: " + System::Convert::ToString(this->visitedNodesAlpha) + L"\nAvg time (s): ";
+            String^ Stats = L"\n\nGameStats:\nGenerated nodes: " + System::Convert::ToString(this->generatedNodes)
+                + L"\nVisited nodes: " + System::Convert::ToString(this->visitedNodes) + L"\nAvg time (s): ";
 
-                if (this->aiMoveCount > 0) {
-                    double avgAlpha = this->totalTimeAlpha / this->aiMoveCount;
-                    alphaStats += System::Convert::ToString(avgAlpha);
-                } else {
-                    alphaStats += L"0";
-                }
-
-                message += alphaStats;
-
+            if (this->aiMoveCount > 0) {
+                double avgTime = this->totalTime / this->aiMoveCount;
+                Stats += System::Convert::ToString(avgTime);
             } else {
-                String^ minimaxStats = L"\n\nMinimax Stats:\nGenerated nodes: " + System::Convert::ToString(this->generatedNodesMinimax)
-                    + L"\nVisited nodes: " + System::Convert::ToString(this->visitedNodesMinimax) + L"\nAvg time (s): ";
-
-                if (this->aiMoveCount > 0) {
-                    double avgMinimax = this->totalTimeMinimax / this->aiMoveCount;
-                    minimaxStats += System::Convert::ToString(avgMinimax);
-                } else {
-                    minimaxStats += L"0";
-                }
-
-                message += minimaxStats;
+                Stats += L"0";
             }
+
+            message += Stats;
         }
 
         MessageBox::Show(message, L"Game Over", MessageBoxButtons::OK, MessageBoxIcon::Information);
