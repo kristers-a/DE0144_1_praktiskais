@@ -11,7 +11,6 @@ namespace CppCLRWinFormsProject {
     public ref class Form1 : public Form {
     private:
         GameState* gameState;
-        int selectedIndex;
         int aiMoveIndex;
 
         array<Button^>^ symbolButtons;
@@ -55,7 +54,6 @@ namespace CppCLRWinFormsProject {
     public:
         Form1() {
             gameState = nullptr;
-            selectedIndex = -1;
             aiMoveIndex = -1;
             symbolButtons = nullptr;
             components = nullptr;
@@ -190,7 +188,6 @@ namespace CppCLRWinFormsProject {
             }
 
             gameState = new GameState((int8_t)lengthSelector->Value);
-            selectedIndex = -1;
 
             groupSelectPlayer->Visible = false;
             groupSelectAlgorithm->Visible = false;
@@ -329,6 +326,7 @@ namespace CppCLRWinFormsProject {
 
             // Shift left to keep it centered over the original position
             int origCenter = btn->Left + 46 / 2;  // center of original size
+            btn->FlatAppearance->BorderColor = Color::Red;
             btn->Left = origCenter - newW / 2 + 10/4;
             btn->Top = btn->Top - 10 / 2;       // center vertically too
             btn->Width = newW;
